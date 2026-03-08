@@ -1,0 +1,178 @@
+{
+  "accuracy_%": 100.0,
+  "precision_%": 100.0,
+  "recall_%": 100.0,
+  "f1_%": 100.0,
+  "correct": 17,
+  "missing": 0,
+  "extra": 0,
+  "wrong_pitch": 0,
+  "mean_onset_deviation_ms": 2.72,
+  "std_onset_deviation_ms": 10.73,
+  "mean_pitch_deviation_cents": 0.0,
+  "std_pitch_deviation_cents": 0.0,
+  "per_pitch_accuracy_%": {
+    "C": 100.0,
+    "D": 100.0,
+    "E": 100.0,
+    "F": 100.0,
+    "G": 100.0,
+    "A": 100.0,
+    "B": 100.0
+  },
+  "notes": [
+    {
+      "status": "correct",
+      "ref_pitch": 60,
+      "perf_pitch": 60,
+      "ref_start_s": 0.0,
+      "perf_start_s": 0.011,
+      "onset_dev_ms": 11.0,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 62,
+      "perf_pitch": 62,
+      "ref_start_s": 0.5,
+      "perf_start_s": 0.514,
+      "onset_dev_ms": 14.3,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 64,
+      "perf_pitch": 64,
+      "ref_start_s": 1.0,
+      "perf_start_s": 0.984,
+      "onset_dev_ms": -16.2,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 65,
+      "perf_pitch": 65,
+      "ref_start_s": 1.5,
+      "perf_start_s": 1.51,
+      "onset_dev_ms": 10.4,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 67,
+      "perf_pitch": 67,
+      "ref_start_s": 2.0,
+      "perf_start_s": 1.985,
+      "onset_dev_ms": -14.9,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 69,
+      "perf_pitch": 69,
+      "ref_start_s": 2.5,
+      "perf_start_s": 2.495,
+      "onset_dev_ms": -5.2,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 71,
+      "perf_pitch": 71,
+      "ref_start_s": 3.0,
+      "perf_start_s": 3.006,
+      "onset_dev_ms": 5.8,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 72,
+      "perf_pitch": 72,
+      "ref_start_s": 3.5,
+      "perf_start_s": 3.498,
+      "onset_dev_ms": -2.3,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 60,
+      "perf_pitch": 60,
+      "ref_start_s": 4.0,
+      "perf_start_s": 4.002,
+      "onset_dev_ms": 2.2,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 64,
+      "perf_pitch": 64,
+      "ref_start_s": 4.0,
+      "perf_start_s": 4.013,
+      "onset_dev_ms": 13.1,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 67,
+      "perf_pitch": 67,
+      "ref_start_s": 4.0,
+      "perf_start_s": 4.01,
+      "onset_dev_ms": 10.3,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 62,
+      "perf_pitch": 62,
+      "ref_start_s": 5.0,
+      "perf_start_s": 5.019,
+      "onset_dev_ms": 18.8,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 65,
+      "perf_pitch": 65,
+      "ref_start_s": 5.0,
+      "perf_start_s": 5.011,
+      "onset_dev_ms": 11.1,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 69,
+      "perf_pitch": 69,
+      "ref_start_s": 5.0,
+      "perf_start_s": 4.999,
+      "onset_dev_ms": -1.3,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 64,
+      "perf_pitch": 64,
+      "ref_start_s": 6.0,
+      "perf_start_s": 5.986,
+      "onset_dev_ms": -13.8,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 67,
+      "perf_pitch": 67,
+      "ref_start_s": 6.0,
+      "perf_start_s": 6.01,
+      "onset_dev_ms": 9.8,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 71,
+      "perf_pitch": 71,
+      "ref_start_s": 6.0,
+      "perf_start_s": 5.993,
+      "onset_dev_ms": -7.0,
+      "pitch_dev_cents": 0.0
+    }
+  ]
+}

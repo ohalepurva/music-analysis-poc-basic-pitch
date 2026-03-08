@@ -1,0 +1,178 @@
+{
+  "accuracy_%": 100.0,
+  "precision_%": 100.0,
+  "recall_%": 100.0,
+  "f1_%": 100.0,
+  "correct": 17,
+  "missing": 0,
+  "extra": 0,
+  "wrong_pitch": 0,
+  "mean_onset_deviation_ms": 0.0,
+  "std_onset_deviation_ms": 0.0,
+  "mean_pitch_deviation_cents": 0.0,
+  "std_pitch_deviation_cents": 0.0,
+  "per_pitch_accuracy_%": {
+    "C": 100.0,
+    "D": 100.0,
+    "E": 100.0,
+    "F": 100.0,
+    "G": 100.0,
+    "A": 100.0,
+    "B": 100.0
+  },
+  "notes": [
+    {
+      "status": "correct",
+      "ref_pitch": 60,
+      "perf_pitch": 60,
+      "ref_start_s": 0.0,
+      "perf_start_s": 0.0,
+      "onset_dev_ms": 0.0,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 62,
+      "perf_pitch": 62,
+      "ref_start_s": 0.5,
+      "perf_start_s": 0.5,
+      "onset_dev_ms": 0.0,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 64,
+      "perf_pitch": 64,
+      "ref_start_s": 1.0,
+      "perf_start_s": 1.0,
+      "onset_dev_ms": 0.0,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 65,
+      "perf_pitch": 65,
+      "ref_start_s": 1.5,
+      "perf_start_s": 1.5,
+      "onset_dev_ms": 0.0,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 67,
+      "perf_pitch": 67,
+      "ref_start_s": 2.0,
+      "perf_start_s": 2.0,
+      "onset_dev_ms": 0.0,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 69,
+      "perf_pitch": 69,
+      "ref_start_s": 2.5,
+      "perf_start_s": 2.5,
+      "onset_dev_ms": 0.0,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 71,
+      "perf_pitch": 71,
+      "ref_start_s": 3.0,
+      "perf_start_s": 3.0,
+      "onset_dev_ms": 0.0,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 72,
+      "perf_pitch": 72,
+      "ref_start_s": 3.5,
+      "perf_start_s": 3.5,
+      "onset_dev_ms": 0.0,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 60,
+      "perf_pitch": 60,
+      "ref_start_s": 4.0,
+      "perf_start_s": 4.0,
+      "onset_dev_ms": 0.0,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 64,
+      "perf_pitch": 64,
+      "ref_start_s": 4.0,
+      "perf_start_s": 4.0,
+      "onset_dev_ms": 0.0,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 67,
+      "perf_pitch": 67,
+      "ref_start_s": 4.0,
+      "perf_start_s": 4.0,
+      "onset_dev_ms": 0.0,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 62,
+      "perf_pitch": 62,
+      "ref_start_s": 5.0,
+      "perf_start_s": 5.0,
+      "onset_dev_ms": 0.0,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 65,
+      "perf_pitch": 65,
+      "ref_start_s": 5.0,
+      "perf_start_s": 5.0,
+      "onset_dev_ms": 0.0,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 69,
+      "perf_pitch": 69,
+      "ref_start_s": 5.0,
+      "perf_start_s": 5.0,
+      "onset_dev_ms": 0.0,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 64,
+      "perf_pitch": 64,
+      "ref_start_s": 6.0,
+      "perf_start_s": 6.0,
+      "onset_dev_ms": 0.0,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 67,
+      "perf_pitch": 67,
+      "ref_start_s": 6.0,
+      "perf_start_s": 6.0,
+      "onset_dev_ms": 0.0,
+      "pitch_dev_cents": 0.0
+    },
+    {
+      "status": "correct",
+      "ref_pitch": 71,
+      "perf_pitch": 71,
+      "ref_start_s": 6.0,
+      "perf_start_s": 6.0,
+      "onset_dev_ms": 0.0,
+      "pitch_dev_cents": 0.0
+    }
+  ]
+}

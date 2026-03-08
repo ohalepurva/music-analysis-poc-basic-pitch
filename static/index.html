@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Music Teacher</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0a0f;
+        --surface: #111118;
+        --surface2: #1a1a24;
+        --border: #2a2a3a;
+        --accent: #c8a96e;
+        --accent2: #7c6ee0;
+        --green: #4eca8b;
+        --red: #e05a5a;
+        --orange: #e0964a;
+        --text: #e8e8f0;
+        --muted: #666680;
+        --font-display: "Playfair Display", serif;
+        --font-mono: "DM Mono", monospace;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font-mono);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 39px,
+            #ffffff04 39px,
+            #ffffff04 40px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 39px,
+            #ffffff04 39px,
+            #ffffff04 40px
+          );
+        pointer-events: none;
+        z-index: 0;
+      }
+      .piano-keys {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 80px;
+        display: flex;
+        align-items: flex-end;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.06;
+      }
+      .piano-keys .key {
+        flex: 1;
+        height: 80px;
+        background: #fff;
+        border: 1px solid #333;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+      }
+      .piano-keys .key.black {
+        background: #111;
+        height: 50px;
+        flex: 0 0 28px;
+        margin: 0 -14px;
+        z-index: 2;
+        border-radius: 2px;
+      }
+      .wrapper {
+        position: relative;
+        z-index: 1;
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 60px 24px 120px;
+      }
+      header {
+        text-align: center;
+        margin-bottom: 64px;
+        animation: fadeDown 0.8s ease both;
+      }
+      .logo-line {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        margin-bottom: 12px;
+      }
+      .logo-icon {
+        font-size: 28px;
+        filter: drop-shadow(0 0 12px var(--accent));
+      }
+      h1 {
+        font-family: var(--font-display);
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        background: linear-gradient(
+          135deg,
+          var(--accent) 0%,
+          #e8d5a8 50%,
+          var(--accent2) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .subtitle {
+        color: var(--muted);
+        font-size: 0.8rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 40px;
+        margin-bottom: 24px;
+        animation: fadeUp 0.8s ease both;
+      }
+      .card-title {
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        color: var(--accent);
+        margin-bottom: 28px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .card-title::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+
+      /* ── Upload zones ── */
+      .upload-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+      @media (max-width: 600px) {
+        .upload-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .upload-zone {
+        border: 1.5px dashed var(--border);
+        border-radius: 12px;
+        padding: 28px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+        background: var(--surface2);
+      }
+      .upload-zone:hover,
+      .upload-zone.dragover {
+        border-color: var(--accent);
+        background: #1e1a0f;
+      }
+      .upload-zone.filled {
+        border-color: var(--green);
+        border-style: solid;
+        background: #0d1e15;
+      }
+      .upload-zone input[type="file"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+      }
+      .upload-icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+      }
+      .upload-label {
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+      .upload-hint {
+        font-size: 0.72rem;
+        color: var(--muted);
+        opacity: 0.6;
+      }
+      .upload-filename {
+        font-size: 0.78rem;
+        color: var(--green);
+        margin-top: 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* ── Cached file badge ── */
+      .cached-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.65rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--accent);
+        background: #1e1a0f;
+        border: 1px solid var(--accent);
+        border-radius: 4px;
+        padding: 2px 7px;
+        margin-top: 6px;
+      }
+      .cached-files-bar {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        margin-bottom: 16px;
+        font-size: 0.72rem;
+        color: var(--muted);
+      }
+      .cached-files-bar.visible {
+        display: flex;
+      }
+      .cached-files-bar span {
+        color: var(--accent);
+      }
+      .btn-clear-cache {
+        background: none;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        color: var(--muted);
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-clear-cache:hover {
+        border-color: var(--red);
+        color: var(--red);
+      }
+
+      .btn-analyze {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, var(--accent), #b8943e);
+        border: none;
+        border-radius: 10px;
+        color: #0a0a0f;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+        overflow: hidden;
+      }
+      .btn-analyze:hover:not(:disabled) {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 24px #c8a96e40;
+      }
+      .btn-analyze:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .btn-analyze::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, transparent 40%, #ffffff20);
+        pointer-events: none;
+      }
+      .status-bar {
+        display: none;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 20px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        margin-top: 16px;
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+      .status-bar.visible {
+        display: flex;
+      }
+      .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        flex-shrink: 0;
+      }
+      .status-step {
+        font-size: 0.7rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      /* ── Results ── */
+      #results {
+        display: none;
+        animation: fadeUp 0.6s ease both;
+      }
+      .score-hero {
+        text-align: center;
+        padding: 40px 20px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
+      }
+      .score-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          ellipse at 50% 0%,
+          #c8a96e15,
+          transparent 70%
+        );
+      }
+      .score-label {
+        font-size: 0.7rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 12px;
+      }
+      .score-number {
+        font-family: var(--font-display);
+        font-size: clamp(4rem, 12vw, 6rem);
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 8px;
+      }
+      .score-number.excellent {
+        color: var(--green);
+      }
+      .score-number.good {
+        color: var(--accent);
+      }
+      .score-number.poor {
+        color: var(--red);
+      }
+      .score-grade {
+        font-size: 0.75rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      @media (max-width: 600px) {
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .stat-box {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px;
+        text-align: center;
+      }
+      .stat-val {
+        font-family: var(--font-display);
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .stat-val.green {
+        color: var(--green);
+      }
+      .stat-val.red {
+        color: var(--red);
+      }
+      .stat-val.orange {
+        color: var(--orange);
+      }
+      .stat-lbl {
+        font-size: 0.65rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .deviation-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .dev-box {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 18px 20px;
+      }
+      .dev-title {
+        font-size: 0.65rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+      .dev-val {
+        font-family: var(--font-display);
+        font-size: 1.4rem;
+        color: var(--accent);
+      }
+      .dev-sub {
+        font-size: 0.72rem;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+      .pitch-grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 6px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+      .pitch-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+      }
+      .pitch-bar-wrap {
+        width: 100%;
+        height: 60px;
+        background: var(--surface2);
+        border-radius: 4px;
+        display: flex;
+        align-items: flex-end;
+        overflow: hidden;
+      }
+      .pitch-bar {
+        width: 100%;
+        border-radius: 4px 4px 0 0;
+        transition: height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .pitch-name {
+        font-size: 0.6rem;
+        color: var(--muted);
+        letter-spacing: 0.05em;
+      }
+      .pitch-pct {
+        font-size: 0.6rem;
+        color: var(--text);
+        opacity: 0.7;
+      }
+      .charts-section {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+      .chart-box {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .chart-title {
+        padding: 14px 18px;
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        border-bottom: 1px solid var(--border);
+      }
+      .chart-box img {
+        width: 100%;
+        display: block;
+      }
+
+      /* ── JSON viewer ── */
+      .json-panel {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+      .json-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 18px;
+        cursor: pointer;
+        user-select: none;
+        transition: background 0.15s;
+      }
+      .json-header:hover {
+        background: var(--surface2);
+      }
+      .json-header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .json-icon {
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        color: var(--accent2);
+        font-weight: 500;
+      }
+      .json-title {
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .json-header-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .btn-copy {
+        background: none;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        color: var(--muted);
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 3px 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-copy:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .btn-copy.copied {
+        border-color: var(--green);
+        color: var(--green);
+      }
+      .json-chevron {
+        font-size: 0.65rem;
+        color: var(--muted);
+        transition: transform 0.25s;
+        display: inline-block;
+      }
+      .json-chevron.open {
+        transform: rotate(180deg);
+      }
+      .json-body {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        border-top: 0px solid var(--border);
+      }
+      .json-body.open {
+        max-height: 600px;
+        overflow-y: auto;
+        border-top: 1px solid var(--border);
+      }
+      pre#jsonContent {
+        padding: 20px;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        line-height: 1.7;
+        color: var(--text);
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+      /* Syntax highlight colours */
+      .jk {
+        color: #7c6ee0;
+      } /* key   */
+      .jn {
+        color: #4eca8b;
+      } /* number */
+      .js {
+        color: #c8a96e;
+      } /* string */
+      .jb {
+        color: #e05a5a;
+      } /* bool/null */
+
+      /* ── 6-col stats grid ── */
+      .stats-grid-6 {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      @media (max-width: 640px) {
+        .stats-grid-6 {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      /* ── 4-panel feedback grid ── */
+      .feedback-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      @media (max-width: 560px) {
+        .feedback-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .feedback-panel {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 18px 20px;
+      }
+      .fp-title {
+        font-size: 0.62rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+      .fp-main {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        color: var(--accent);
+        margin-bottom: 4px;
+        line-height: 1.1;
+      }
+      .fp-sub {
+        font-size: 0.68rem;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+      .fp-verdict {
+        font-size: 0.68rem;
+        font-weight: 500;
+        padding: 3px 8px;
+        border-radius: 4px;
+        display: inline-block;
+      }
+      .verdict-good {
+        background: #4eca8b22;
+        color: #4eca8b;
+      }
+      .verdict-warn {
+        background: #e0964a22;
+        color: #e0964a;
+      }
+      .verdict-bad {
+        background: #e05a5a22;
+        color: #e05a5a;
+      }
+      .verdict-neutral {
+        background: #66668022;
+        color: #666680;
+      }
+      @keyframes fadeDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* ── Backend selector ──────────────────────────────────────────────────── */
+      .backend-selector {
+        margin: 0 0 18px 0;
+      }
+      .backend-label {
+        display: block;
+        font-size: 0.72rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+      .backend-options {
+        display: flex;
+        gap: 10px;
+      }
+      .backend-option {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: border-color 0.2s, background 0.2s;
+        background: var(--surface);
+      }
+      .backend-option:has(input:checked) {
+        border-color: var(--accent);
+        background: #1e1a0f;
+      }
+      .backend-option input[type="radio"] {
+        display: none;
+      }
+      .backend-name {
+        font-family: var(--font-mono);
+        font-size: 0.82rem;
+        color: var(--fg);
+        font-weight: 600;
+      }
+      .backend-badge {
+        font-size: 0.62rem;
+        font-family: var(--font-mono);
+        padding: 2px 6px;
+        border-radius: 4px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+      .backend-badge.best {
+        background: #1a3320;
+        color: #4ade80;
+      }
+      .backend-badge.fast {
+        background: #1a2333;
+        color: #60a5fa;
+      }
+      .backend-desc {
+        font-size: 0.72rem;
+        color: var(--muted);
+        margin-left: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="piano-keys" id="pianoKeys"></div>
+
+    <div class="wrapper">
+      <header>
+        <div class="logo-line">
+          <span class="logo-icon">🎹</span>
+          <h1>AI Music Teacher</h1>
+        </div>
+        <p class="subtitle">Neural Piano Performance Analysis</p>
+      </header>
+
+      <div class="card" id="uploadCard">
+        <div class="card-title">Upload Files</div>
+
+        <!-- Cached files notice -->
+        <div class="cached-files-bar" id="cachedBar">
+          <div>📎 Using cached files: <span id="cachedNames"></span></div>
+          <button class="btn-clear-cache" onclick="clearCache()">Clear</button>
+        </div>
+
+        <div class="upload-grid">
+          <div class="upload-zone" id="midiZone">
+            <input
+              type="file"
+              id="midiInput"
+              accept=".mid,.midi"
+              onchange="handleFile('midi', this)"
+            />
+            <div class="upload-icon">🎼</div>
+            <div class="upload-label">Reference MIDI</div>
+            <div class="upload-hint">Sheet music (.mid)</div>
+            <div class="upload-filename" id="midiName"></div>
+          </div>
+          <div class="upload-zone" id="audioZone">
+            <input
+              type="file"
+              id="audioInput"
+              accept=".wav,.mp3,.flac,.ogg,.m4a,.mid,.midi"
+              onchange="handleFile('audio', this)"
+            />
+            <div class="upload-icon">🎧</div>
+            <div class="upload-label">Your Performance</div>
+            <div class="upload-hint">Audio or MIDI (.wav .mp3 .mid…)</div>
+            <div class="upload-filename" id="audioName"></div>
+          </div>
+        </div>
+
+        <!-- Backend selector -->
+        <div class="backend-selector">
+          <span class="backend-label">Transcription engine</span>
+          <div class="backend-options">
+            <label class="backend-option">
+              <input type="radio" name="backend" value="bytedance" checked />
+              <span class="backend-name">ByteDance</span>
+              <span class="backend-badge best">Best</span>
+              <span class="backend-desc">~97% accuracy · slower</span>
+            </label>
+            <label class="backend-option">
+              <input type="radio" name="backend" value="basicpitch" />
+              <span class="backend-name">Basic Pitch</span>
+              <span class="backend-badge fast">Fast</span>
+              <span class="backend-desc">~80% accuracy · instant</span>
+            </label>
+          </div>
+        </div>
+
+        <button
+          class="btn-analyze"
+          id="analyzeBtn"
+          onclick="startAnalysis()"
+          disabled
+        >
+          Analyze Performance
+        </button>
+
+        <div class="status-bar" id="statusBar">
+          <div class="spinner"></div>
+          <span class="status-step" id="statusText">Preparing…</span>
+        </div>
+      </div>
+
+      <div id="results">
+        <div class="score-hero">
+          <div class="score-label">Overall Accuracy</div>
+          <div class="score-number" id="scoreNumber">—</div>
+          <div class="score-grade" id="scoreGrade"></div>
+        </div>
+        <!-- Note breakdown: 6 boxes -->
+        <div class="stats-grid-6">
+          <div class="stat-box">
+            <div class="stat-val green" id="statCorrect">—</div>
+            <div class="stat-lbl">Correct</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val" style="color: #64b5f6" id="statEarly">—</div>
+            <div class="stat-lbl">Early</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val orange" id="statLate">—</div>
+            <div class="stat-lbl">Late</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val red" id="statMissing">—</div>
+            <div class="stat-lbl">Missing</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val" style="color: var(--accent2)" id="statWrong">
+              —
+            </div>
+            <div class="stat-lbl">Wrong Note</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val" style="color: var(--muted)" id="statExtra">
+              —
+            </div>
+            <div class="stat-lbl">Extra</div>
+          </div>
+        </div>
+
+        <!-- Four feedback panels -->
+        <div class="feedback-grid">
+          <div class="feedback-panel">
+            <div class="fp-title">⏱ Timing</div>
+            <div class="fp-main" id="devTiming">—</div>
+            <div class="fp-sub" id="devTimingStd"></div>
+            <div class="fp-verdict" id="timingVerdict"></div>
+          </div>
+
+          <div class="feedback-panel">
+            <div class="fp-title">🎵 Pitch Deviation</div>
+            <div class="fp-main" id="devPitch">—</div>
+            <div class="fp-sub">cents from perfect tuning</div>
+            <div class="fp-verdict" id="pitchVerdict"></div>
+          </div>
+
+          <div class="feedback-panel">
+            <div class="fp-title">🥁 Tempo</div>
+            <div class="fp-main" id="tempoVal">—</div>
+            <div class="fp-sub" id="tempoBpm"></div>
+            <div class="fp-verdict" id="tempoVerdict"></div>
+          </div>
+
+          <div class="feedback-panel">
+            <div class="fp-title">🔊 Dynamics</div>
+            <div class="fp-main" id="dynVal">—</div>
+            <div class="fp-sub">velocity vs score</div>
+            <div class="fp-verdict" id="dynVerdict"></div>
+          </div>
+        </div>
+
+        <!-- Per pitch class -->
+        <div class="pitch-grid" id="pitchGrid"></div>
+        <div class="charts-section">
+          <div class="chart-box">
+            <div class="chart-title">Piano Roll — Note Diff</div>
+            <img id="imgPianoRoll" src="" alt="Piano Roll" />
+          </div>
+          <div class="chart-box">
+            <div class="chart-title">Timing & Pitch Deviation</div>
+            <img id="imgTiming" src="" alt="Timing Deviation" />
+          </div>
+        </div>
+
+        <!-- JSON viewer -->
+        <div class="json-panel" id="jsonPanel">
+          <div class="json-header" onclick="toggleJson()">
+            <div class="json-header-left">
+              <span class="json-icon">{ }</span>
+              <span class="json-title">Raw JSON Response</span>
+            </div>
+            <div class="json-header-right">
+              <button class="btn-copy" id="copyBtn" onclick="copyJson(event)">
+                Copy
+              </button>
+              <span class="json-chevron" id="jsonChevron">▼</span>
+            </div>
+          </div>
+          <div class="json-body" id="jsonBody">
+            <pre id="jsonContent"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const NOTE_NAMES = [
+        "C",
+        "C#",
+        "D",
+        "D#",
+        "E",
+        "F",
+        "F#",
+        "G",
+        "G#",
+        "A",
+        "A#",
+        "B",
+      ];
+
+      // ── In-memory file cache (persists while tab is open) ────────────────────
+      const cache = { midi: null, audio: null };
+
+      function saveToCache(type, file) {
+        cache[type] = file;
+        updateCacheBar();
+      }
+
+      function clearCache() {
+        cache.midi = null;
+        cache.audio = null;
+        // Reset zones
+        ["midi", "audio"].forEach((type) => {
+          const zone = document.getElementById(type + "Zone");
+          const nameEl = document.getElementById(type + "Name");
+          zone.classList.remove("filled");
+          nameEl.textContent = "";
+          nameEl.innerHTML = "";
+        });
+        document.getElementById("cachedBar").classList.remove("visible");
+        updateBtn();
+      }
+
+      function updateCacheBar() {
+        const bar = document.getElementById("cachedBar");
+        const names = document.getElementById("cachedNames");
+        const parts = [];
+        if (cache.midi) parts.push(cache.midi.name);
+        if (cache.audio) parts.push(cache.audio.name);
+        if (parts.length > 0) {
+          names.textContent = parts.join(" + ");
+          bar.classList.add("visible");
+        } else {
+          bar.classList.remove("visible");
+        }
+      }
+
+      // ── Restore cached files on load ─────────────────────────────────────────
+      window.addEventListener("load", () => {
+        buildPianoKeys();
+        if (cache.midi) restoreZone("midi", cache.midi);
+        if (cache.audio) restoreZone("audio", cache.audio);
+        updateCacheBar();
+        updateBtn();
+      });
+
+      function restoreZone(type, file) {
+        const nameEl = document.getElementById(type + "Name");
+        const zone = document.getElementById(type + "Zone");
+        nameEl.innerHTML = `${file.name} <span class="cached-badge">⚡ cached</span>`;
+        zone.classList.add("filled");
+      }
+
+      // ── Drag and drop ─────────────────────────────────────────────────────────
+      ["midiZone", "audioZone"].forEach((id) => {
+        const zone = document.getElementById(id);
+        zone.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          zone.classList.add("dragover");
+        });
+        zone.addEventListener("dragleave", () =>
+          zone.classList.remove("dragover")
+        );
+        zone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          zone.classList.remove("dragover");
+          const file = e.dataTransfer.files[0];
+          if (file) setFile(id === "midiZone" ? "midi" : "audio", file);
+        });
+      });
+
+      function handleFile(type, input) {
+        if (input.files[0]) setFile(type, input.files[0]);
+      }
+
+      function setFile(type, file) {
+        saveToCache(type, file);
+        const nameEl = document.getElementById(type + "Name");
+        const zone = document.getElementById(type + "Zone");
+        nameEl.textContent = file.name;
+        zone.classList.add("filled");
+        updateBtn();
+      }
+
+      function updateBtn() {
+        document.getElementById("analyzeBtn").disabled = !(
+          cache.midi && cache.audio
+        );
+      }
+
+      // ── Start analysis ────────────────────────────────────────────────────────
+      async function startAnalysis() {
+        const btn = document.getElementById("analyzeBtn");
+        btn.disabled = true;
+        document.getElementById("results").style.display = "none";
+        showStatus("Uploading files…");
+
+        const backend =
+          document.querySelector('input[name="backend"]:checked')?.value ||
+          "bytedance";
+
+        const fd = new FormData();
+        fd.append("midi", cache.midi);
+        fd.append("backend", backend);
+
+        const perfName = cache.audio.name.toLowerCase();
+        if (perfName.endsWith(".mid") || perfName.endsWith(".midi")) {
+          fd.append("midi2", cache.audio);
+        } else {
+          fd.append("audio", cache.audio);
+        }
+
+        try {
+          const res = await fetch("/analyze", { method: "POST", body: fd });
+          const data = await res.json();
+          if (data.error) throw new Error(data.error);
+          pollJob(data.job_id);
+        } catch (e) {
+          showStatus("Error: " + e.message);
+          btn.disabled = false;
+        }
+      }
+
+      const STATUS_LABELS = {
+        queued: "Queued…",
+        loading: "Loading files…",
+        transcribing: "Transcribing audio with Basic Pitch neural model…",
+        comparing: "Comparing notes…",
+        done: "Done!",
+        error: "Error",
+      };
+
+      function pollJob(jobId) {
+        const interval = setInterval(async () => {
+          try {
+            const res = await fetch(`/status/${jobId}`);
+            const data = await res.json();
+            showStatus(STATUS_LABELS[data.status] || data.status);
+            if (data.status === "done") {
+              clearInterval(interval);
+              hideStatus();
+              renderResults(data.result, jobId);
+              document.getElementById("analyzeBtn").disabled = false;
+            } else if (data.status === "error") {
+              clearInterval(interval);
+              showStatus("Error: " + data.error);
+              document.getElementById("analyzeBtn").disabled = false;
+            }
+          } catch (e) {
+            clearInterval(interval);
+            showStatus("Connection error");
+          }
+        }, 1200);
+      }
+
+      // ── JSON viewer ──────────────────────────────────────────────────────────
+      let lastJson = null;
+
+      function syntaxHighlight(obj) {
+        const json = JSON.stringify(obj, null, 2);
+        return json.replace(
+          /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+          (match) => {
+            if (/^"/.test(match)) {
+              if (/:$/.test(match)) return `<span class="jk">${match}</span>`;
+              return `<span class="js">${match}</span>`;
+            }
+            if (/true|false|null/.test(match))
+              return `<span class="jb">${match}</span>`;
+            return `<span class="jn">${match}</span>`;
+          }
+        );
+      }
+
+      function toggleJson() {
+        const body = document.getElementById("jsonBody");
+        const chevron = document.getElementById("jsonChevron");
+        body.classList.toggle("open");
+        chevron.classList.toggle("open");
+      }
+
+      function copyJson(e) {
+        e.stopPropagation();
+        if (!lastJson) return;
+        navigator.clipboard
+          .writeText(JSON.stringify(lastJson, null, 2))
+          .then(() => {
+            const btn = document.getElementById("copyBtn");
+            btn.textContent = "Copied!";
+            btn.classList.add("copied");
+            setTimeout(() => {
+              btn.textContent = "Copy";
+              btn.classList.remove("copied");
+            }, 2000);
+          });
+      }
+
+      // ── Render results ────────────────────────────────────────────────────────
+      function verdictClass(v) {
+        if (!v) return "verdict-neutral";
+        const lv = v.toLowerCase();
+        if (
+          lv.includes("good") ||
+          lv.includes("on tempo") ||
+          lv.includes("excellent")
+        )
+          return "verdict-good";
+        if (
+          lv.includes("fast") ||
+          lv.includes("slow") ||
+          lv.includes("soft") ||
+          lv.includes("loud") ||
+          lv.includes("early") ||
+          lv.includes("late")
+        )
+          return "verdict-warn";
+        if (lv.includes("uneven") || lv.includes("bad") || lv.includes("needs"))
+          return "verdict-bad";
+        return "verdict-neutral";
+      }
+
+      function setVerdict(id, text) {
+        const el = document.getElementById(id);
+        el.textContent = text;
+        el.className = "fp-verdict " + verdictClass(text);
+      }
+
+      function renderResults(r, jobId) {
+        // ── Score hero ──────────────────────────────────────────────────────────
+        const acc = r.accuracy;
+        const scoreEl = document.getElementById("scoreNumber");
+        scoreEl.textContent = acc.toFixed(1) + "%";
+        scoreEl.className =
+          "score-number " +
+          (acc >= 90 ? "excellent" : acc >= 70 ? "good" : "poor");
+        document.getElementById("scoreGrade").textContent =
+          acc >= 95
+            ? "★ Excellent"
+            : acc >= 85
+            ? "▲ Good"
+            : acc >= 70
+            ? "◆ Fair"
+            : "✗ Needs Practice";
+
+        // ── Note counts ─────────────────────────────────────────────────────────
+        document.getElementById("statCorrect").textContent = r.n_correct ?? "—";
+        document.getElementById("statEarly").textContent = r.n_early ?? "—";
+        document.getElementById("statLate").textContent = r.n_late ?? "—";
+        document.getElementById("statMissing").textContent = r.n_missing ?? "—";
+        document.getElementById("statWrong").textContent =
+          r.n_wrong_pitch ?? "—";
+        document.getElementById("statExtra").textContent = r.n_extra ?? "—";
+
+        // ── Timing panel ────────────────────────────────────────────────────────
+        const td = r.mean_onset_dev_ms ?? 0;
+        document.getElementById("devTiming").textContent =
+          (td >= 0 ? "+" : "") + td.toFixed(0) + " ms";
+        document.getElementById("devTimingStd").textContent =
+          "± " + (r.std_onset_dev_ms ?? 0).toFixed(0) + " ms std dev";
+        const timingVerdict =
+          Math.abs(td) <= 50
+            ? "good"
+            : td < 0
+            ? "playing early"
+            : "playing late";
+        setVerdict("timingVerdict", timingVerdict);
+
+        // ── Pitch panel ─────────────────────────────────────────────────────────
+        const pd = r.mean_pitch_dev_cents ?? 0;
+        document.getElementById("devPitch").textContent =
+          (pd >= 0 ? "+" : "") + pd.toFixed(1) + " ¢";
+        setVerdict(
+          "pitchVerdict",
+          Math.abs(pd) < 20
+            ? "good"
+            : Math.abs(pd) < 50
+            ? "slightly off"
+            : "out of tune"
+        );
+
+        // ── Tempo panel ─────────────────────────────────────────────────────────
+        const tempo = r.tempo;
+        if (tempo) {
+          const ratio = tempo.overall_ratio ?? 1;
+          document.getElementById("tempoVal").textContent =
+            (ratio * 100).toFixed(0) + "% speed";
+          document.getElementById("tempoBpm").textContent = `${
+            tempo.bpm_perf ?? "—"
+          } BPM  (ref: ${tempo.bpm_ref ?? "—"} BPM)`;
+          setVerdict("tempoVerdict", tempo.verdict ?? "");
+        }
+
+        // ── Dynamics panel ──────────────────────────────────────────────────────
+        const dyn = r.dynamics;
+        if (dyn) {
+          const ratio = dyn.mean_velocity_ratio ?? 1;
+          const dynLabel =
+            ratio < 0.7
+              ? "softer than score"
+              : ratio > 1.4
+              ? "louder than score"
+              : "matches score";
+          document.getElementById("dynVal").textContent =
+            (ratio * 100).toFixed(0) + "%";
+          setVerdict("dynVerdict", dyn.verdict ?? dynLabel);
+        }
+
+        // ── Per pitch-class bars ─────────────────────────────────────────────────
+        const grid = document.getElementById("pitchGrid");
+        grid.innerHTML = "";
+        NOTE_NAMES.forEach((note) => {
+          const pct =
+            r.per_pitch && r.per_pitch[note] != null ? r.per_pitch[note] : 0;
+          const color =
+            pct >= 90 ? "#4eca8b" : pct >= 70 ? "#c8a96e" : "#e05a5a";
+          const col = document.createElement("div");
+          col.className = "pitch-col";
+          col.innerHTML = `
+        <div class="pitch-bar-wrap">
+          <div class="pitch-bar" style="height:${pct}%;background:${color}"></div>
+        </div>
+        <div class="pitch-name">${note}</div>
+        <div class="pitch-pct">${pct > 0 ? pct + "%" : "—"}</div>`;
+          grid.appendChild(col);
+        });
+
+        // ── Charts ──────────────────────────────────────────────────────────────
+        const cb = Date.now();
+        document.getElementById(
+          "imgPianoRoll"
+        ).src = `/image/${jobId}/piano_roll.png?t=${cb}`;
+        document.getElementById(
+          "imgTiming"
+        ).src = `/image/${jobId}/timing_deviation.png?t=${cb}`;
+
+        // ── JSON viewer ──────────────────────────────────────────────────────────
+        lastJson = r;
+        document.getElementById("jsonContent").innerHTML = syntaxHighlight(r);
+
+        const resultsEl = document.getElementById("results");
+        resultsEl.style.display = "block";
+        resultsEl.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function showStatus(msg) {
+        const bar = document.getElementById("statusBar");
+        bar.classList.add("visible");
+        document.getElementById("statusText").textContent = msg;
+      }
+      function hideStatus() {
+        document.getElementById("statusBar").classList.remove("visible");
+      }
+
+      function buildPianoKeys() {
+        const container = document.getElementById("pianoKeys");
+        for (let i = 0; i < 52; i++) {
+          const key = document.createElement("div");
+          key.className = "key";
+          container.appendChild(key);
+        }
+      }
+    </script>
+  </body>
+</html>
