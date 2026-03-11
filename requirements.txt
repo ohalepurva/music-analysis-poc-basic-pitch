@@ -1,0 +1,17 @@
+# Pin numpy first to avoid version conflicts
+numpy>=1.23.0
+
+# Core
+scipy
+matplotlib
+pretty_midi
+mir_eval
+dtaidistance
+soundfile
+librosa
+
+# Transcription backends
+basic-pitch
+onnxruntime
+piano_transcription_inference
+torch
