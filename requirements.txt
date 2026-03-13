@@ -1,7 +1,4 @@
-# Pin numpy first to avoid version conflicts
 numpy>=1.23.0
-
-# Core
 scipy
 matplotlib
 pretty_midi
@@ -9,9 +6,8 @@ mir_eval
 dtaidistance
 soundfile
 librosa
-
-# Transcription backends
-basic-pitch
 onnxruntime
+basic-pitch
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.2.0+cpu
 piano_transcription_inference
-torch
