@@ -13,10 +13,6 @@ COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir --timeout=120 -r requirements.txt
 
-# Install the basic-pitch local package
-COPY basic-pitch/ ./basic-pitch/
-RUN pip install --no-cache-dir ./basic-pitch/
-
 # Pre-download ByteDance model at build time
 RUN python -c "\
 import urllib.request, pathlib; \
