@@ -272,7 +272,7 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    port = 8000
+    port = int(os.environ.get("PORT", 8000))  # Railway sets PORT automatically
     server = HTTPServer(("0.0.0.0", port), Handler)
     print(f"\n  🎹  AI Music Teacher")
     print(f"  Running at → http://localhost:{port}\n")
