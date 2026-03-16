@@ -1,10 +1,9 @@
 FROM python:3.11-slim
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libsndfile1 \
     ffmpeg \
     curl \
-    git \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -16,7 +15,9 @@ RUN pip install --upgrade pip && \
     pip install --no-cache-dir torch==2.2.0+cpu --extra-index-url https://download.pytorch.org/whl/cpu && \
     pip install --no-cache-dir --timeout=120 -r requirements.txt
 
-COPY . .
+COPY server.py main.py ./
+COPY piano ./piano
+COPY static ./static
 
 EXPOSE 8000
 

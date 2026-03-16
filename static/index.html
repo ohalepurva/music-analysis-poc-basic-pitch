@@ -723,68 +723,6 @@
         }
       }
 
-      /* ── Backend selector ──────────────────────────────────────────────────── */
-      .backend-selector {
-        margin: 0 0 18px 0;
-      }
-      .backend-label {
-        display: block;
-        font-size: 0.72rem;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--muted);
-        margin-bottom: 10px;
-      }
-      .backend-options {
-        display: flex;
-        gap: 10px;
-      }
-      .backend-option {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 14px;
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        cursor: pointer;
-        transition: border-color 0.2s, background 0.2s;
-        background: var(--surface);
-      }
-      .backend-option:has(input:checked) {
-        border-color: var(--accent);
-        background: #1e1a0f;
-      }
-      .backend-option input[type="radio"] {
-        display: none;
-      }
-      .backend-name {
-        font-family: var(--font-mono);
-        font-size: 0.82rem;
-        color: var(--fg);
-        font-weight: 600;
-      }
-      .backend-badge {
-        font-size: 0.62rem;
-        font-family: var(--font-mono);
-        padding: 2px 6px;
-        border-radius: 4px;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-      }
-      .backend-badge.best {
-        background: #1a3320;
-        color: #4ade80;
-      }
-      .backend-badge.fast {
-        background: #1a2333;
-        color: #60a5fa;
-      }
-      .backend-desc {
-        font-size: 0.72rem;
-        color: var(--muted);
-        margin-left: auto;
-      }
     </style>
   </head>
   <body>
@@ -832,25 +770,6 @@
             <div class="upload-label">Your Performance</div>
             <div class="upload-hint">Audio or MIDI (.wav .mp3 .mid…)</div>
             <div class="upload-filename" id="audioName"></div>
-          </div>
-        </div>
-
-        <!-- Backend selector -->
-        <div class="backend-selector">
-          <span class="backend-label">Transcription engine</span>
-          <div class="backend-options">
-            <label class="backend-option">
-              <input type="radio" name="backend" value="bytedance" checked />
-              <span class="backend-name">ByteDance</span>
-              <span class="backend-badge best">Best</span>
-              <span class="backend-desc">~97% accuracy · slower</span>
-            </label>
-            <label class="backend-option">
-              <input type="radio" name="backend" value="basicpitch" />
-              <span class="backend-name">Basic Pitch</span>
-              <span class="backend-badge fast">Fast</span>
-              <span class="backend-desc">~80% accuracy · instant</span>
-            </label>
           </div>
         </div>
 
@@ -1085,13 +1004,8 @@
         document.getElementById("results").style.display = "none";
         showStatus("Uploading files…");
 
-        const backend =
-          document.querySelector('input[name="backend"]:checked')?.value ||
-          "bytedance";
-
         const fd = new FormData();
         fd.append("midi", cache.midi);
-        fd.append("backend", backend);
 
         const perfName = cache.audio.name.toLowerCase();
         if (perfName.endsWith(".mid") || perfName.endsWith(".midi")) {
@@ -1114,7 +1028,7 @@
       const STATUS_LABELS = {
         queued: "Queued…",
         loading: "Loading files…",
-        transcribing: "Transcribing audio with Basic Pitch neural model…",
+        transcribing: "Transcribing audio with the ByteDance piano model…",
         comparing: "Comparing notes…",
         done: "Done!",
         error: "Error",

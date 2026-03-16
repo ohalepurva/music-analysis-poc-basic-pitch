@@ -250,8 +250,9 @@ class Handler(BaseHTTPRequestHandler):
                     self.send_json({"error": "Provide audio or second MIDI file"}, 400)
                     return
 
-                # Backend selection: 'bytedance' (default) or 'basicpitch'
-                backend = 'basicpitch' if form.get('backend', {}).get('data', b'').decode() == 'basicpitch' else 'bytedance'
+                # Legacy backend field is still accepted, but Basic Pitch now maps
+                # to the ByteDance path inside the transcription router.
+                backend = form.get("backend", {}).get("data", b"").decode().strip() or "bytedance"
 
                 # Run in background thread
                 t = threading.Thread(

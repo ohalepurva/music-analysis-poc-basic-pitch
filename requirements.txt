@@ -6,6 +6,4 @@ mir_eval
 dtaidistance
 soundfile
 librosa
-onnxruntime
-basic-pitch
 piano_transcription_inference

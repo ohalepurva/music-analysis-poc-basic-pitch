@@ -2,7 +2,7 @@
 main.py — AI Music Teacher
 ──────────────────────────
 Compare a MIDI reference against an audio performance (or another MIDI).
-Uses Spotify's Basic Pitch neural model for polyphonic piano transcription.
+Uses the ByteDance piano transcription model for audio analysis.
 
 Usage:
   # MIDI vs Audio
@@ -42,16 +42,16 @@ def run_comparison(ref_notes, perf_notes, output_dir=None, title="Piano Comparis
     print(f"{'─'*60}")
 
     t0 = time.time()
-    result = compare_notes(ref_notes, perf_notes, auto_align_tempo=True)
+    result = compare_notes(ref_notes, perf_notes, dtw_align=True)
     print(f"  Compared in {time.time() - t0:.2f}s\n")
     print(result.summary())
 
     # Per-pitch-class breakdown
-    if result.per_pitch_accuracy:
+    if result.per_pitch:
         print("\n  Per-pitch-class accuracy:")
-        for pc, acc in sorted(result.per_pitch_accuracy.items(), key=lambda x: -x[1]):
-            bar = "█" * int(acc * 20)
-            print(f"    {pc:3s}  {bar:<20}  {acc*100:5.1f}%")
+        for pc, acc in sorted(result.per_pitch.items(), key=lambda x: -x[1]):
+            bar = "█" * int(acc / 5)
+            print(f"    {pc:3s}  {bar:<20}  {acc:5.1f}%")
 
     # Save outputs
     if output_dir:
@@ -70,12 +70,11 @@ def run_comparison(ref_notes, perf_notes, output_dir=None, title="Piano Comparis
             "missing":                  result.n_missing,
             "extra":                    result.n_extra,
             "wrong_pitch":              result.n_wrong_pitch,
-            "mean_onset_deviation_ms":  round(result.mean_onset_deviation * 1000, 2),
-            "std_onset_deviation_ms":   round(result.std_onset_deviation * 1000, 2),
-            "mean_pitch_deviation_cents": round(result.mean_pitch_deviation, 2),
-            "std_pitch_deviation_cents":  round(result.std_pitch_deviation, 2),
+            "mean_onset_deviation_ms":  round(result.mean_onset_dev_ms, 2),
+            "std_onset_deviation_ms":   round(result.std_onset_dev_ms, 2),
+            "mean_pitch_deviation_cents": round(result.mean_pitch_dev_cents, 2),
             "per_pitch_accuracy_%": {
-                k: round(v * 100, 1) for k, v in result.per_pitch_accuracy.items()
+                k: round(v, 1) for k, v in result.per_pitch.items()
             },
             "notes": [
                 {
@@ -84,8 +83,8 @@ def run_comparison(ref_notes, perf_notes, output_dir=None, title="Piano Comparis
                     "perf_pitch":       m.perf_note.pitch if m.perf_note else None,
                     "ref_start_s":      round(m.ref_note.start,  3) if m.ref_note  else None,
                     "perf_start_s":     round(m.perf_note.start, 3) if m.perf_note else None,
-                    "onset_dev_ms":     round(m.onset_deviation * 1000, 1),
-                    "pitch_dev_cents":  round(m.pitch_deviation, 1),
+                    "onset_dev_ms":     round(m.onset_dev_ms, 1),
+                    "pitch_dev_cents":  round(m.pitch_dev_cents, 1),
                 }
                 for m in result.matches
             ],

@@ -1,6 +1,6 @@
-# music-analysis-poc-basic-pitch
+# music-analysis-poc
 
-this app is in a poc phase where I am using Basic pitch & Bytedance models for transcribing audio -> midi conversions. The comparator compares both files upload (audio & midi) & generates a a response. 
+This app compares a reference MIDI file against a performed audio or MIDI file and generates timing, pitch, tempo, and dynamics feedback. Audio transcription now uses the ByteDance piano model only.
 
 # To Run the app, run
 python server.py
